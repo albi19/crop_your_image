@@ -8,8 +8,8 @@ import 'package:crop_your_image/src/widget/circle_crop_area_clipper.dart';
 import 'package:crop_your_image/src/widget/constants.dart';
 import 'package:crop_your_image/src/widget/rect_crop_area_clipper.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 
 typedef ViewportBasedRect = Rect;
 typedef ImageBasedRect = Rect;
@@ -329,6 +329,9 @@ class _CropEditorState extends State<_CropEditor> {
       }
       ..onChangeArea = (newArea) {
         _resizeWith(_aspectRatio, newArea);
+      }
+      ..onChangeScale = (scale) {
+        _applyScale(scale);
       };
   }
 

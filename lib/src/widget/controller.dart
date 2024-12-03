@@ -35,6 +35,9 @@ class CropController {
   /// change [ViewportBasedRect] of crop rect
   /// based on [ImageBasedRect] of original image.
   set area(ImageBasedRect value) => _delegate.onChangeArea(value);
+
+  /// change [scale]
+  set scale(double value) => _delegate.onChangeScale(value);
 }
 
 /// Delegate of actions from [CropController]
@@ -57,4 +60,7 @@ class CropControllerDelegate {
 
   /// callback that [CropController.area] is changed.
   late ValueChanged<ImageBasedRect> onChangeArea;
+
+  /// callback that [CropController.scale] is changed.
+  late ValueChanged<double> onChangeScale;
 }
