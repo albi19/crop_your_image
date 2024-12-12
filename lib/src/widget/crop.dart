@@ -134,32 +134,36 @@ class Crop extends StatelessWidget {
   /// (Advanced) Injected logic for parsing image detail.
   final ImageParser imageParser;
 
-  Crop({
-    super.key,
-    required this.image,
-    required this.onCropped,
-    this.aspectRatio,
-    this.initialSize,
-    this.initialRectBuilder,
-    this.initialArea,
-    this.withCircleUi = false,
-    this.controller,
-    this.onMoved,
-    this.onStatusChanged,
-    this.maskColor,
-    this.baseColor = Colors.white,
-    this.radius = 0,
-    this.cornerDotBuilder,
-    this.clipBehavior = Clip.hardEdge,
-    this.fixCropRect = false,
-    this.progressIndicator = const SizedBox.shrink(),
-    this.interactive = false,
-    this.willUpdateScale,
-    this.formatDetector = defaultFormatDetector,
-    this.imageCropper = defaultImageCropper,
-    ImageParser? imageParser,
-    this.scrollZoomSensitivity = 0.05,
-  })  : assert((initialSize ?? 1.0) <= 1.0,
+  /// Initial scale of the image, relative to the screen size.
+  final double? initialScale;
+
+  Crop(
+      {super.key,
+      required this.image,
+      required this.onCropped,
+      this.aspectRatio,
+      this.initialSize,
+      this.initialRectBuilder,
+      this.initialArea,
+      this.withCircleUi = false,
+      this.controller,
+      this.onMoved,
+      this.onStatusChanged,
+      this.maskColor,
+      this.baseColor = Colors.white,
+      this.radius = 0,
+      this.cornerDotBuilder,
+      this.clipBehavior = Clip.hardEdge,
+      this.fixCropRect = false,
+      this.progressIndicator = const SizedBox.shrink(),
+      this.interactive = false,
+      this.willUpdateScale,
+      this.formatDetector = defaultFormatDetector,
+      this.imageCropper = defaultImageCropper,
+      ImageParser? imageParser,
+      this.scrollZoomSensitivity = 0.05,
+      this.initialScale})
+      : assert((initialSize ?? 1.0) <= 1.0,
             'initialSize must be less than 1.0, or null meaning not specified.'),
         this.imageParser = imageParser ?? defaultImageParser;
 
@@ -197,6 +201,7 @@ class Crop extends StatelessWidget {
             imageCropper: imageCropper,
             formatDetector: formatDetector,
             imageParser: imageParser,
+            initialScale: initialScale,
           ),
         );
       },
@@ -228,7 +233,7 @@ class _CropEditor extends StatefulWidget {
   final FormatDetector? formatDetector;
   final ImageParser imageParser;
   final double scrollZoomSensitivity;
-
+  final double? initialScale;
   const _CropEditor({
     super.key,
     required this.image,
@@ -254,6 +259,7 @@ class _CropEditor extends StatefulWidget {
     required this.formatDetector,
     required this.imageParser,
     required this.scrollZoomSensitivity,
+    required this.initialScale,
   });
 
   @override
@@ -430,7 +436,8 @@ class _CropEditorState extends State<_CropEditor> {
     }
 
     if (widget.interactive) {
-      final initialScale = calculator.scaleToCover(screenSize, _imageRect);
+      final initialScale = widget.initialScale ??
+          calculator.scaleToCover(screenSize, _imageRect);
       _applyScale(initialScale);
     }
   }
@@ -531,6 +538,7 @@ class _CropEditorState extends State<_CropEditor> {
     double nextScale, {
     Offset? focalPoint,
   }) {
+    print('Applying scale: $nextScale');
     final allowScale = widget.willUpdateScale?.call(nextScale) ?? true;
     if (!allowScale) {
       return;
